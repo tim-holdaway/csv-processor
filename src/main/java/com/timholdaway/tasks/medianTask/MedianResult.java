@@ -50,6 +50,7 @@ public class MedianResult implements IntermediateResult<MedianResult> {
                 currentHistogramValue.representativeRow = otherHistogramValue.representativeRow;
             }
         }
+        shardsCount += other.shardsCount;
     }
 
     @Override
@@ -75,6 +76,9 @@ public class MedianResult implements IntermediateResult<MedianResult> {
     }
 
     public HistogramValue getMedian() {
+        if (count == 0) {
+            return null;
+        }
         long halfCount = count / 2;
         long currentCount = 0;
         for (HistogramValue v : histogram) {
@@ -83,6 +87,8 @@ public class MedianResult implements IntermediateResult<MedianResult> {
                 return v;
             }
         }
+        // We should never reach this exception, because the counts within histogram should add up
+        // to the full count
         throw new IllegalStateException("Median histogram did not contain enough values");
     }
 
@@ -95,9 +101,9 @@ public class MedianResult implements IntermediateResult<MedianResult> {
     }
 
     public static class HistogramValue {
-        private long count = 0;
-        private final long age;
-        private InputRow representativeRow = null;
+        long count = 0;
+        final long age;
+        InputRow representativeRow = null;
 
         public HistogramValue(int age) {
             this.age = age;

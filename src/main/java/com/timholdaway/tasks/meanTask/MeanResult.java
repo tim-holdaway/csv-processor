@@ -28,6 +28,7 @@ public class MeanResult implements IntermediateResult<MeanResult> {
     public void coalesce(MeanResult other) {
         sum += other.sum;
         count += other.count;
+        shardsCount += other.shardsCount;
     }
 
     @Override
@@ -52,7 +53,7 @@ public class MeanResult implements IntermediateResult<MeanResult> {
                 getMean());
     }
 
-    private double getMean() {
+    public double getMean() {
         if (count == 0) {
             return 0;
         }
