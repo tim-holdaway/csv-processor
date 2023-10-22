@@ -1,4 +1,8 @@
+/* (C)2023 Tim Holdaway */
 package com.timholdaway;
+
+import java.io.File;
+import java.io.IOException;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
@@ -8,12 +12,19 @@ public class Main {
         // IntelliJ IDEA suggests fixing it.
         System.out.printf("Hello and welcome!");
 
-        // Press Ctrl+R or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        FileDownloader downloader = new FileDownloader();
+        FileProcessor processor = new FileProcessor();
 
-            // Press Ctrl+D to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Cmd+F8.
-            System.out.println("i = " + i);
+        try {
+            File f =
+                    downloader.downloadFile(
+                            "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file1.csv");
+            System.out.printf("Retrieved a file %s", f.getAbsolutePath());
+
+            processor.processFile(f);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

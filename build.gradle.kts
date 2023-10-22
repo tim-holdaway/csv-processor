@@ -33,7 +33,7 @@ spotless {
         endWithNewline()
     }
     java {
-        googleJavaFormat()
+        googleJavaFormat().aosp()
         formatAnnotations()
         licenseHeader("/* (C)2023 Tim Holdaway */")
     }

@@ -5,35 +5,35 @@ import com.timholdaway.InputRow;
 import com.timholdaway.tasks.IntermediateResult;
 
 public class MeanResult implements IntermediateResult<MeanResult> {
-  long sum = 0;
-  long count = 0;
+    long sum = 0;
+    long count = 0;
 
-  int shardsCount;
+    int shardsCount;
 
-  public MeanResult() {
-    this(1);
-  }
+    public MeanResult() {
+        this(1);
+    }
 
-  public MeanResult(int shardsCount) {
-    this.shardsCount = shardsCount;
-  }
+    public MeanResult(int shardsCount) {
+        this.shardsCount = shardsCount;
+    }
 
-  @Override
-  public void accumulate(InputRow inputRow) {
-    sum += inputRow.age();
-    count++;
-  }
+    @Override
+    public void accumulate(InputRow inputRow) {
+        sum += inputRow.age();
+        count++;
+    }
 
-  @Override
-  public void coalesce(MeanResult other) {
-    sum += other.sum;
-    count += other.count;
-  }
+    @Override
+    public void coalesce(MeanResult other) {
+        sum += other.sum;
+        count += other.count;
+    }
 
-  @Override
-  public String reportedResult() {
-    return String.format(
-        """
+    @Override
+    public String reportedResult() {
+        return String.format(
+                """
                         Mean results for %s shards
 
                         Sum:
@@ -45,17 +45,17 @@ public class MeanResult implements IntermediateResult<MeanResult> {
                         Mean:
                         %s
                         """
-            .trim(),
-        shardsCount,
-        sum,
-        count,
-        getMean());
-  }
-
-  private double getMean() {
-    if (count == 0) {
-      return 0;
+                        .trim(),
+                shardsCount,
+                sum,
+                count,
+                getMean());
     }
-    return sum / (double) count;
-  }
+
+    private double getMean() {
+        if (count == 0) {
+            return 0;
+        }
+        return sum / (double) count;
+    }
 }

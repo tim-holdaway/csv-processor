@@ -11,28 +11,27 @@ import java.io.IOException;
 
 public class FileProcessor {
 
-  public void processFile(File file) throws IOException {
-    CsvMapper mapper = new CsvMapper();
-    CsvSchema headerSchema = CsvSchema.emptySchema().withHeader();
+    public void processFile(File file) throws IOException {
+        CsvMapper mapper = new CsvMapper();
+        CsvSchema headerSchema = CsvSchema.emptySchema().withHeader();
 
-    MeanResult meanResult = new MeanResult();
-    MedianResult medianResult = new MedianResult();
+        MeanResult meanResult = new MeanResult();
+        MedianResult medianResult = new MedianResult();
 
-    try (MappingIterator<InputRow> it =
-        mapper
-            .readerFor(InputRow.class)
-            .with(mapper.schemaFor(InputRow.class))
-            .with(headerSchema)
-            .readValues(file)) {
-      while (it.hasNext()) {
-        InputRow current = it.next();
-        System.out.println("Read a row: " + current);
+        try (MappingIterator<InputRow> it =
+                mapper.readerFor(InputRow.class)
+                        .with(mapper.schemaFor(InputRow.class))
+                        .with(headerSchema)
+                        .readValues(file)) {
+            while (it.hasNext()) {
+                InputRow current = it.next();
+                System.out.println("Read a row: " + current);
 
-        meanResult.accumulate(current);
-        medianResult.accumulate(current);
-      }
+                meanResult.accumulate(current);
+                medianResult.accumulate(current);
+            }
+        }
+        System.out.println(meanResult.reportedResult());
+        System.out.println(medianResult.reportedResult());
     }
-    System.out.println(meanResult.reportedResult());
-    System.out.println(medianResult.reportedResult());
-  }
 }
