@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("application")
+    id("com.diffplug.spotless") version "6.22.0"
 }
 
 group = "org.example"
@@ -20,10 +21,20 @@ tasks.test {
     useJUnitPlatform()
 }
 
-//application {
-//    mainClassName =  if (project.hasProperty("mainClass")) project.getProperty("mainClass") else "NULL"
-//}
-
 application {
     mainClass = "com.timholdaway.Main"
+}
+
+spotless {
+    format("misc") {
+        target("*.gradle", "*.md", ".gitignore")
+        trimTrailingWhitespace()
+        indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+        endWithNewline()
+    }
+    java {
+        googleJavaFormat()
+        formatAnnotations()
+        licenseHeader("/* (C)2023 Tim Holdaway */")
+    }
 }
