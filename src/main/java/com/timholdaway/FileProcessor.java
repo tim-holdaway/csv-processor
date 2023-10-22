@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public class FileProcessor {
 
-    record InputRow (String fname, String lname, int age) {}
     public void processFile(File file) throws IOException {
         CsvMapper mapper = new CsvMapper();
         CsvSchema headerSchema = CsvSchema.emptySchema().withHeader();
