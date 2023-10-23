@@ -59,9 +59,6 @@ public class MedianResult implements IntermediateResult<MedianResult> {
                 """
             Median results for %s shards
 
-            Histogram:
-            %s
-
             Count:
             %s
 
@@ -70,7 +67,7 @@ public class MedianResult implements IntermediateResult<MedianResult> {
             """
                         .trim(),
                 shardsCount,
-                printHistogram(),
+                //                printHistogram(),
                 count,
                 getMedian());
     }
