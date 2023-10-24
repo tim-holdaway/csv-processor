@@ -39,7 +39,10 @@ public class FileBatchDownloaderProcessor {
                                     try {
                                         System.out.printf(
                                                 "Processing file %s%n", file.getAbsolutePath());
-                                        return processor.processFile(file, standardResults.resultsForShard()).stream();
+                                        return processor
+                                                .processFile(
+                                                        file, standardResults.resultsForShard())
+                                                .stream();
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }

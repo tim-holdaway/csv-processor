@@ -1,8 +1,8 @@
+/* (C)2023 Tim Holdaway */
 package com.timholdaway.tasks;
 
 import com.timholdaway.tasks.meanTask.MeanResult;
 import com.timholdaway.tasks.medianTask.MedianResult;
-
 import java.util.Arrays;
 import java.util.List;
 

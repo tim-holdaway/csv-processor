@@ -2,7 +2,6 @@
 package com.timholdaway;
 
 import com.timholdaway.tasks.StandardResults;
-
 import java.util.Arrays;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
@@ -27,8 +26,6 @@ public class Main {
                         "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file4.csv",
                         "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/bogus.csv",
                         "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file5.csv"),
-                new StandardResults()
-
-        );
+                new StandardResults());
     }
 }
