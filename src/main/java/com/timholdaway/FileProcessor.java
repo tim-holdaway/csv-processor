@@ -14,12 +14,9 @@ import java.util.List;
 
 public class FileProcessor {
 
-    public List<IntermediateResult<?>> processFile(File file) throws IOException {
+    public List<IntermediateResult<?>> processFile(File file, List<IntermediateResult<?>> resultTypes) throws IOException {
         CsvMapper mapper = new CsvMapper();
         CsvSchema headerSchema = CsvSchema.emptySchema().withHeader();
-
-        MeanResult meanResult = new MeanResult();
-        MedianResult medianResult = new MedianResult();
 
         try (MappingIterator<InputRow> it =
                 mapper.readerFor(InputRow.class)
@@ -29,11 +26,10 @@ public class FileProcessor {
             while (it.hasNext()) {
                 InputRow current = it.next();
 
-                meanResult.accumulate(current);
-                medianResult.accumulate(current);
+                resultTypes.forEach(result -> result.accumulate(current));
             }
         }
 
-        return Arrays.asList(meanResult, medianResult);
+        return resultTypes;
     }
 }

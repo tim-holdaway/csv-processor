@@ -2,6 +2,7 @@
 package com.timholdaway;
 
 import com.timholdaway.tasks.IntermediateResult;
+import com.timholdaway.tasks.StandardResults;
 import com.timholdaway.tasks.meanTask.MeanResult;
 import com.timholdaway.tasks.medianTask.MedianResult;
 import java.io.File;
@@ -17,7 +18,7 @@ public class FileBatchDownloaderProcessor {
         this.processor = processor;
     }
 
-    public void downloadAndProcess(List<String> urls) {
+    public void downloadAndProcess(List<String> urls, StandardResults standardResults) {
         List<File> tempDownloads =
                 urls.stream()
                         .map(
@@ -38,7 +39,7 @@ public class FileBatchDownloaderProcessor {
                                     try {
                                         System.out.printf(
                                                 "Processing file %s%n", file.getAbsolutePath());
-                                        return processor.processFile(file).stream();
+                                        return processor.processFile(file, standardResults.resultsForShard()).stream();
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
