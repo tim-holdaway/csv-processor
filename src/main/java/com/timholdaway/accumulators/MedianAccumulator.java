@@ -1,21 +1,20 @@
 /* (C)2023 Tim Holdaway */
-package com.timholdaway.tasks.medianTask;
+package com.timholdaway.accumulators;
 
 import com.timholdaway.InputRow;
-import com.timholdaway.tasks.IntermediateResult;
 
-public class MedianResult implements IntermediateResult<MedianResult> {
+public class MedianAccumulator implements Accumulator<MedianAccumulator> {
     static final int MAX_AGE = 200;
     HistogramValue[] histogram = new HistogramValue[MAX_AGE];
     long count = 0;
 
     int shardsCount;
 
-    public MedianResult() {
+    public MedianAccumulator() {
         this(1);
     }
 
-    public MedianResult(int shardsCount) {
+    public MedianAccumulator(int shardsCount) {
         for (int i = 0; i < MAX_AGE; ++i) {
             histogram[i] = new HistogramValue(i);
         }
@@ -39,7 +38,7 @@ public class MedianResult implements IntermediateResult<MedianResult> {
     }
 
     @Override
-    public void coalesce(MedianResult other) {
+    public void coalesce(MedianAccumulator other) {
         count += other.count;
         for (int i = 0; i < MAX_AGE; ++i) {
             HistogramValue currentHistogramValue = histogram[i];

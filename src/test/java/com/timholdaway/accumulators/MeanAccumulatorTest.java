@@ -1,21 +1,21 @@
 /* (C)2023 Tim Holdaway */
-package com.timholdaway.tasks.meanTask;
+package com.timholdaway.accumulators;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.timholdaway.InputRow;
 import org.junit.jupiter.api.Test;
 
-public class MeanResultTest {
+public class MeanAccumulatorTest {
     @Test
     public void testResultWithEmptyValues() {
-        MeanResult result = new MeanResult();
+        MeanAccumulator result = new MeanAccumulator();
         assertEquals(0, result.getMean());
     }
 
     @Test
     public void testResultWithValues() {
-        MeanResult result = new MeanResult();
+        MeanAccumulator result = new MeanAccumulator();
         result.accumulate(new InputRow("Foo", "Bar", 28));
         result.accumulate(new InputRow("Foo2", "Bar", 29));
 
@@ -27,12 +27,12 @@ public class MeanResultTest {
 
     @Test
     public void testCoalesce() {
-        MeanResult result1 = new MeanResult();
+        MeanAccumulator result1 = new MeanAccumulator();
         result1.accumulate(new InputRow("Foo", "Bar", 28));
         result1.accumulate(new InputRow("Foo2", "Bar", 29));
-        MeanResult result2 = new MeanResult();
+        MeanAccumulator result2 = new MeanAccumulator();
         result2.accumulate(new InputRow("Foo3", "Bar", 30));
-        MeanResult result3 = new MeanResult();
+        MeanAccumulator result3 = new MeanAccumulator();
         result3.accumulate(new InputRow("Foo4", "Bar", 31));
 
         result2.coalesce(result3);

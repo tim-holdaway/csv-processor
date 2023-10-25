@@ -1,10 +1,10 @@
 /* (C)2023 Tim Holdaway */
 package com.timholdaway;
 
-import com.timholdaway.tasks.IntermediateResult;
-import com.timholdaway.tasks.StandardResults;
-import com.timholdaway.tasks.meanTask.MeanResult;
-import com.timholdaway.tasks.medianTask.MedianResult;
+import com.timholdaway.accumulators.Accumulator;
+import com.timholdaway.accumulators.MeanAccumulator;
+import com.timholdaway.accumulators.MedianAccumulator;
+import com.timholdaway.accumulators.StandardAccumulators;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -18,7 +18,7 @@ public class FileBatchDownloaderProcessor {
         this.processor = processor;
     }
 
-    public void downloadAndProcess(List<String> urls, StandardResults standardResults) {
+    public void downloadAndProcess(List<String> urls, StandardAccumulators standardAccumulators) {
         List<File> tempDownloads =
                 urls.stream()
                         .map(
@@ -32,7 +32,7 @@ public class FileBatchDownloaderProcessor {
                                 })
                         .toList();
 
-        List<IntermediateResult<?>> results =
+        List<Accumulator<?>> results =
                 tempDownloads.stream()
                         .flatMap(
                                 file -> {
@@ -41,7 +41,8 @@ public class FileBatchDownloaderProcessor {
                                                 "Processing file %s%n", file.getAbsolutePath());
                                         return processor
                                                 .processFile(
-                                                        file, standardResults.resultsForShard())
+                                                        file,
+                                                        standardAccumulators.resultsForShard())
                                                 .stream();
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
@@ -49,14 +50,14 @@ public class FileBatchDownloaderProcessor {
                                 })
                         .toList();
 
-        MeanResult aggregateMean = new MeanResult(0);
-        MedianResult aggreagteMedian = new MedianResult(0);
+        MeanAccumulator aggregateMean = new MeanAccumulator(0);
+        MedianAccumulator aggreagteMedian = new MedianAccumulator(0);
 
         results.forEach(
                 result -> {
-                    if (result instanceof MeanResult shardMean) {
+                    if (result instanceof MeanAccumulator shardMean) {
                         aggregateMean.coalesce(shardMean);
-                    } else if (result instanceof MedianResult shardMedian) {
+                    } else if (result instanceof MedianAccumulator shardMedian) {
                         aggreagteMedian.coalesce(shardMedian);
                     }
                 });

@@ -1,20 +1,19 @@
 /* (C)2023 Tim Holdaway */
-package com.timholdaway.tasks.meanTask;
+package com.timholdaway.accumulators;
 
 import com.timholdaway.InputRow;
-import com.timholdaway.tasks.IntermediateResult;
 
-public class MeanResult implements IntermediateResult<MeanResult> {
+public class MeanAccumulator implements Accumulator<MeanAccumulator> {
     long sum = 0;
     long count = 0;
 
     int shardsCount;
 
-    public MeanResult() {
+    public MeanAccumulator() {
         this(1);
     }
 
-    public MeanResult(int shardsCount) {
+    public MeanAccumulator(int shardsCount) {
         this.shardsCount = shardsCount;
     }
 
@@ -25,7 +24,7 @@ public class MeanResult implements IntermediateResult<MeanResult> {
     }
 
     @Override
-    public void coalesce(MeanResult other) {
+    public void coalesce(MeanAccumulator other) {
         sum += other.sum;
         count += other.count;
         shardsCount += other.shardsCount;

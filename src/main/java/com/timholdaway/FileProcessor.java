@@ -4,15 +4,15 @@ package com.timholdaway;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.timholdaway.tasks.IntermediateResult;
+import com.timholdaway.accumulators.Accumulator;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class FileProcessor {
 
-    public List<IntermediateResult<?>> processFile(
-            File file, List<IntermediateResult<?>> resultTypes) throws IOException {
+    public List<Accumulator<?>> processFile(File file, List<Accumulator<?>> resultTypes)
+            throws IOException {
         CsvMapper mapper = new CsvMapper();
         CsvSchema headerSchema = CsvSchema.emptySchema().withHeader();
 
