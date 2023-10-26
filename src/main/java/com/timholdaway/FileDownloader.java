@@ -16,9 +16,9 @@ public class FileDownloader {
             File tempFile = File.createTempFile("CrowdStrikeTakehome-", ".tmp");
             tempFile.deleteOnExit();
             Files.copy(new URL(url).openStream(), tempFile.toPath(), REPLACE_EXISTING);
-            return ok(tempFile);
+            return ok(tempFile, url);
         } catch (IOException e) {
-            return error(String.format("Failed to download file %s (%s)", url, e.getMessage()));
+            return error(String.format("Failed to download file (%s)", e.getMessage()), url);
         }
     }
 }

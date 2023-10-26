@@ -36,7 +36,7 @@ public class FileProcessor {
                 throw new IllegalArgumentException("Bad header row with single-line file");
             }
         } catch (Exception e) {
-            return error(String.format("Failed to process file %s (%s)", file, e.getMessage()));
+            return error(String.format("Failed to process file (%s)", e.getMessage()));
         }
 
         return ok(resultTypes);
