@@ -17,20 +17,19 @@ public class FileBatchDownloaderProcessor {
         this.processor = processor;
     }
 
+    public Result<List<Accumulator<?>>> processFileResult(
+            Result<File> fileResult, StandardAccumulators standardAccumulators) {
+        return fileResult.mapResult(
+                file -> processor.processFile(file, standardAccumulators.resultsForShard()));
+    }
+
     public void downloadAndProcess(List<String> urls, StandardAccumulators standardAccumulators) {
         List<Result<File>> tempDownloads =
                 urls.stream().map(url -> downloader.downloadFile(url)).toList();
 
         List<Result<List<Accumulator<?>>>> results =
                 tempDownloads.stream()
-                        .map(
-                                fileResult ->
-                                        fileResult.mapResult(
-                                                file ->
-                                                        processor.processFile(
-                                                                file,
-                                                                standardAccumulators
-                                                                        .resultsForShard())))
+                        .map(fileResult -> processFileResult(fileResult, standardAccumulators))
                         .toList();
 
         List<Accumulator<?>> successful =
