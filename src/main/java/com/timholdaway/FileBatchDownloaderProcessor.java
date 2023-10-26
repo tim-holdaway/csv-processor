@@ -19,13 +19,7 @@ public class FileBatchDownloaderProcessor {
 
     public void downloadAndProcess(List<String> urls, StandardAccumulators standardAccumulators) {
         List<Result<File>> tempDownloads =
-                urls.stream()
-                        .map(
-                                url -> {
-                                    System.out.printf("Downloading file %s%n", url);
-                                    return downloader.downloadFile(url);
-                                })
-                        .toList();
+                urls.stream().map(url -> downloader.downloadFile(url)).toList();
 
         List<Result<List<Accumulator<?>>>> results =
                 tempDownloads.stream()
