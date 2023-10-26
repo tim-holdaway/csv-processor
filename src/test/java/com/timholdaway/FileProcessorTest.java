@@ -52,14 +52,126 @@ public class FileProcessorTest {
                     Arrays.asList("fname,lname,age", "Bar,Foo,12", "Baz,qux,13"));
 
             FileProcessor processor = new FileProcessor();
-            List<Accumulator<?>> accumulators =
+            Result<List<Accumulator<?>>> accumulators =
                     processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
 
-            assertThat(accumulators).hasSize(1);
-            Accumulator<?> result = accumulators.get(0);
+            assertThat(accumulators.isOk()).isTrue();
+
+            assertThat(accumulators.extractOk()).hasSize(1);
+            Accumulator<?> result = accumulators.extractOk().get(0);
 
             assertThat(result).isInstanceOf(TrivialResult.class);
             assertThat(result.reportedResult()).isEqualTo("trivial result count: 2");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testProcessesColumnsInDifferentOrder() {
+        try {
+            File testFile = File.createTempFile("TestFile", ".tmp");
+            testFile.deleteOnExit();
+
+            Files.write(
+                    testFile.toPath(),
+                    Arrays.asList("lname,age,fname", "Foo,12,Bar", "qux,13,Baz"));
+
+            FileProcessor processor = new FileProcessor();
+            Result<List<Accumulator<?>>> accumulators =
+                    processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
+
+            assertThat(accumulators.isOk()).isTrue();
+
+            assertThat(accumulators.extractOk()).hasSize(1);
+            Accumulator<?> result = accumulators.extractOk().get(0);
+
+            assertThat(result).isInstanceOf(TrivialResult.class);
+            assertThat(result.reportedResult()).isEqualTo("trivial result count: 2");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testFailsToProcessCsvWithExtraValues() {
+        try {
+            File testFile = File.createTempFile("TestFile", ".tmp");
+            testFile.deleteOnExit();
+
+            Files.write(
+                    testFile.toPath(),
+                    Arrays.asList("fname,lname,age", "Bar,Foo,12,extra", "Baz,qux,13"));
+
+            FileProcessor processor = new FileProcessor();
+            Result<List<Accumulator<?>>> accumulators =
+                    processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
+
+            assertThat(accumulators.isError()).isTrue();
+            assertThat(accumulators.extractError()).startsWith("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Too many entries");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testFailsToProcessCsvWithExtraHeadersAndColumns() {
+        try {
+            File testFile = File.createTempFile("TestFile", ".tmp");
+            testFile.deleteOnExit();
+
+            Files.write(
+                    testFile.toPath(),
+                    Arrays.asList("fname,lname,age,foo", "Bar,Foo,12,extra", "Baz,qux,13,extra"));
+
+            FileProcessor processor = new FileProcessor();
+            Result<List<Accumulator<?>>> accumulators =
+                    processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
+
+            assertThat(accumulators.isError()).isTrue();
+            assertThat(accumulators.extractError()).startsWith("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Too many entries");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testFailsToProcessCsvWithMissingColumns() {
+        try {
+            File testFile = File.createTempFile("TestFile", ".tmp");
+            testFile.deleteOnExit();
+
+            Files.write(testFile.toPath(), Arrays.asList("fname,lname", "Bar,Foo", "Baz,qux"));
+
+            FileProcessor processor = new FileProcessor();
+            Result<List<Accumulator<?>>> accumulators =
+                    processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
+
+            assertThat(accumulators.isError()).isTrue();
+            assertThat(accumulators.extractError()).startsWith("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Too many entries");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testFailsToProcessExampleBadFile() {
+        try {
+            File testFile = File.createTempFile("TestFile", ".tmp");
+            testFile.deleteOnExit();
+
+            Files.write(testFile.toPath(), Arrays.asList("This is not a csv file at all"));
+
+            FileProcessor processor = new FileProcessor();
+            Result<List<Accumulator<?>>> accumulators =
+                    processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
+
+            assertThat(accumulators.isError()).isTrue();
+            assertThat(accumulators.extractError()).startsWith("Failed to process file");
+            assertThat(accumulators.extractError()).containsPattern("Missing . header columns");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

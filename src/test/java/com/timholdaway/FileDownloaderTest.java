@@ -20,10 +20,30 @@ public class FileDownloaderTest {
             Files.write(testFile.toPath(), Arrays.asList("Foo", "Bar"));
 
             FileDownloader downloader = new FileDownloader();
-            File downloadedFile = downloader.downloadFile(testFile.toURI().toURL().toString());
+            Result<File> downloadedFile =
+                    downloader.downloadFile(testFile.toURI().toURL().toString());
 
-            List<String> lines = Files.readAllLines(downloadedFile.toPath());
+            assertThat(downloadedFile.isOk()).isTrue();
+
+            List<String> lines = Files.readAllLines(downloadedFile.extractOk().toPath());
             assertThat(lines).containsExactly("Foo", "Bar");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testDownloadsNonExistingFile() {
+        try {
+            File testFile = File.createTempFile("TestFile", ".tmp");
+            testFile.delete();
+
+            FileDownloader downloader = new FileDownloader();
+            Result<File> downloadedFile =
+                    downloader.downloadFile(testFile.toURI().toURL().toString());
+
+            assertThat(downloadedFile.isError()).isTrue();
+            assertThat(downloadedFile.extractError()).startsWith("Failed to download file");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

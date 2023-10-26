@@ -20,12 +20,21 @@ public class Main {
 
         batcher.downloadAndProcess(
                 Arrays.asList(
-                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file1.csv",
-                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file2.csv",
-                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file3.csv",
-                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file4.csv",
-                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/bogus.csv",
-                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file5.csv"),
+                        //
+                        // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file1.csv",
+                        //
+                        // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file2.csv",
+                        //
+                        // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file3.csv",
+                        //
+                        // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file4.csv",
+                        //
+                        // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/bogus.csv",
+                        //
+                        // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file6_bad.csv",
+                        "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file6_bad.csv"),
+                //
+                // "file:///Users/tim/Downloads/DetPlatCloudHomework_main/data/file5.csv"),
                 new StandardAccumulators());
     }
 }
