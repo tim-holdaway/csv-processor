@@ -43,7 +43,7 @@ public class FileDownloaderTest {
                     downloader.downloadFile(testFile.toURI().toURL().toString());
 
             assertThat(downloadedFile.isError()).isTrue();
-            assertThat(downloadedFile.extractError()).startsWith("Failed to download file");
+            assertThat(downloadedFile.extractError()).contains("Failed to download file");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

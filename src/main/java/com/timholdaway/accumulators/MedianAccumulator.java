@@ -54,21 +54,7 @@ public class MedianAccumulator implements Accumulator<MedianAccumulator> {
 
     @Override
     public String reportedResult() {
-        return String.format(
-                """
-            Median results for %s shards
-
-            Count:
-            %s
-
-            Median:
-            %s
-            """
-                        .trim(),
-                shardsCount,
-                //                printHistogram(),
-                count,
-                getMedian());
+        return String.format("Median: %s", getMedian());
     }
 
     public HistogramValue getMedian() {
@@ -107,7 +93,8 @@ public class MedianAccumulator implements Accumulator<MedianAccumulator> {
 
         @Override
         public String toString() {
-            return String.format("%s: %s (%s)", age, count, representativeRow);
+            return String.format(
+                    "%s (%s %s)", age, representativeRow.fname(), representativeRow.lname());
         }
     }
 }

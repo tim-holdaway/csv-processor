@@ -32,24 +32,7 @@ public class MeanAccumulator implements Accumulator<MeanAccumulator> {
 
     @Override
     public String reportedResult() {
-        return String.format(
-                """
-                        Mean results for %s shards
-
-                        Sum:
-                        %s
-
-                        Count:
-                        %s
-
-                        Mean:
-                        %s
-                        """
-                        .trim(),
-                shardsCount,
-                sum,
-                count,
-                getMean());
+        return String.format("Mean: %s", getMean());
     }
 
     public double getMean() {

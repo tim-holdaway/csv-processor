@@ -4,8 +4,6 @@ package com.timholdaway;
 import static com.timholdaway.Result.error;
 
 import com.timholdaway.accumulators.Accumulator;
-import com.timholdaway.accumulators.MeanAccumulator;
-import com.timholdaway.accumulators.MedianAccumulator;
 import com.timholdaway.accumulators.StandardAccumulators;
 import java.io.File;
 import java.time.Clock;
@@ -91,15 +89,8 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
                         .filter(Objects::nonNull)
                         .toList();
 
-        MeanAccumulator aggregateMean = new MeanAccumulator(0);
-        MedianAccumulator aggreagteMedian = new MedianAccumulator(0);
-
         for (Accumulator<?> result : successful) {
-            if (result instanceof MeanAccumulator shardMean) {
-                aggregateMean.coalesce(shardMean);
-            } else if (result instanceof MedianAccumulator shardMedian) {
-                aggreagteMedian.coalesce(shardMedian);
-            }
+            standardAccumulators.accumulate(result);
         }
         long end = Clock.systemUTC().millis();
 
@@ -107,10 +98,16 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
         System.out.println(
                 "Ran tasks on thread pool ForkJoinPool.commonPool with size: "
                         + ForkJoinPool.commonPool().getPoolSize());
-        System.out.println(aggregateMean.reportedResult());
-        System.out.println(aggreagteMedian.reportedResult());
+
+        System.out.println();
+        System.out.println("Errors: ");
         for (String err : errors) {
-            System.out.println("Got Error: " + err);
+            System.out.println(err);
         }
+
+        System.out.println();
+        System.out.println("Results:");
+        System.out.println(standardAccumulators.getMean().reportedResult());
+        System.out.println(standardAccumulators.getMedian().reportedResult());
     }
 }

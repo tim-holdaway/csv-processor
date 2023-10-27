@@ -30,23 +30,23 @@ public class CsvProcessorApplication {
                                                 downloader, processor)
                                         : new ParallelFileBatchDownloaderProcessor(
                                                 downloader, processor);
-        new CsvProcessorApplication(downloaderProcessorOptionFunction).run();
+        List<String> urls = readUrlsFromStdin();
+
+        new CsvProcessorApplication(downloaderProcessorOptionFunction).run(urls);
     }
 
-    public void run() {
-
-        System.out.println("reading urls from stdin");
-        List<String> urls = readUrlsFromStdin();
+    public void run(List<String> urls) {
 
         System.out.println("Downloading and processing " + urls.size() + " urls");
 
-        FileBatchDownloaderProcessor batcher =
+        FileBatchDownloaderProcessor batchProcessor =
                 downloaderProcessorOptionFunction.apply(downloader, processor);
 
-        batcher.downloadAndProcess(urls, new StandardAccumulators());
+        batchProcessor.downloadAndProcess(urls, new StandardAccumulators());
     }
 
-    private List<String> readUrlsFromStdin() {
+    private static List<String> readUrlsFromStdin() {
+        System.out.println("reading urls from stdin");
         List<String> urls = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {

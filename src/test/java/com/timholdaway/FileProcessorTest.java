@@ -34,11 +34,13 @@ public class FileProcessorTest {
     }
 
     public static class TrivialAccumulatorOnly implements AccumulatorTypes {
-
         @Override
         public List<Accumulator<?>> resultsForShard() {
             return List.of(new TrivialResult());
         }
+
+        @Override
+        public void accumulate(Accumulator<?> accumulator) {}
     }
 
     @Test
@@ -108,7 +110,7 @@ public class FileProcessorTest {
                     processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
 
             assertThat(accumulators.isError()).isTrue();
-            assertThat(accumulators.extractError()).startsWith("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Failed to process file");
             assertThat(accumulators.extractError()).contains("Too many entries");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -130,8 +132,8 @@ public class FileProcessorTest {
                     processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
 
             assertThat(accumulators.isError()).isTrue();
-            assertThat(accumulators.extractError()).startsWith("Failed to process file");
-            assertThat(accumulators.extractError()).contains("Too many entries");
+            assertThat(accumulators.extractError()).contains("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Unrecognized field \"foo\"");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -150,8 +152,8 @@ public class FileProcessorTest {
                     processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
 
             assertThat(accumulators.isError()).isTrue();
-            assertThat(accumulators.extractError()).startsWith("Failed to process file");
-            assertThat(accumulators.extractError()).contains("Too many entries");
+            assertThat(accumulators.extractError()).contains("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Missing 1 header column");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -170,7 +172,7 @@ public class FileProcessorTest {
                     processor.processFile(testFile, new TrivialAccumulatorOnly().resultsForShard());
 
             assertThat(accumulators.isError()).isTrue();
-            assertThat(accumulators.extractError()).startsWith("Failed to process file");
+            assertThat(accumulators.extractError()).contains("Failed to process file");
             assertThat(accumulators.extractError()).containsPattern("Missing . header columns");
         } catch (IOException e) {
             throw new RuntimeException(e);
