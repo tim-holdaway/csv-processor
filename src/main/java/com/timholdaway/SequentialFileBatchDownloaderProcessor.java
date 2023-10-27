@@ -6,13 +6,15 @@ import com.timholdaway.accumulators.MeanAccumulator;
 import com.timholdaway.accumulators.MedianAccumulator;
 import com.timholdaway.accumulators.StandardAccumulators;
 import java.io.File;
+import java.time.Clock;
 import java.util.*;
 
 public class SequentialFileBatchDownloaderProcessor implements FileBatchDownloaderProcessor {
     FileDownloader downloader;
     FileProcessor processor;
 
-    public SequentialFileBatchDownloaderProcessor(FileDownloader downloader, FileProcessor processor) {
+    public SequentialFileBatchDownloaderProcessor(
+            FileDownloader downloader, FileProcessor processor) {
         this.downloader = downloader;
         this.processor = processor;
     }
@@ -25,6 +27,8 @@ public class SequentialFileBatchDownloaderProcessor implements FileBatchDownload
 
     @Override
     public void downloadAndProcess(List<String> urls, StandardAccumulators standardAccumulators) {
+        long start = Clock.systemUTC().millis();
+
         List<Result<File>> tempDownloads =
                 urls.stream().map(url -> downloader.downloadFile(url)).toList();
 
@@ -53,6 +57,11 @@ public class SequentialFileBatchDownloaderProcessor implements FileBatchDownload
                 aggreagteMedian.coalesce(shardMedian);
             }
         }
+
+        long end = Clock.systemUTC().millis();
+
+        System.out.println("Processed files in " + ((double) end - start) / 1000 + " seconds");
+        System.out.println("Ran tasks on one thread");
 
         System.out.println(aggregateMean.reportedResult());
         System.out.println(aggreagteMedian.reportedResult());
