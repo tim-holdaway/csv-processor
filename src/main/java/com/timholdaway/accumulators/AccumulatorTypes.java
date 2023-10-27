@@ -7,4 +7,6 @@ public interface AccumulatorTypes {
     List<Accumulator<?>> resultsForShard();
 
     void accumulate(Accumulator<?> accumulator);
+
+    void printResults();
 }

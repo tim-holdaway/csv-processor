@@ -4,7 +4,7 @@ package com.timholdaway;
 import static com.timholdaway.Result.error;
 
 import com.timholdaway.accumulators.Accumulator;
-import com.timholdaway.accumulators.StandardAccumulators;
+import com.timholdaway.accumulators.AccumulatorTypes;
 import java.io.File;
 import java.time.Clock;
 import java.util.ArrayList;
@@ -24,23 +24,14 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
     }
 
     public Result<List<Accumulator<?>>> processFileResult(
-            Result<File> fileResult, StandardAccumulators standardAccumulators) {
+            Result<File> fileResult, AccumulatorTypes accumulatorTypes) {
         return fileResult.mapResult(
-                file -> processor.processFile(file, standardAccumulators.resultsForShard()));
+                file -> processor.processFile(file, accumulatorTypes.resultsForShard()));
     }
 
     private static void printCurrentThread(String operation) {
         System.out.println(operation + " running on " + Thread.currentThread().getName());
     }
-
-    //    public Runnable downloadThenProcess(ExecutorService executorService, String url) {
-    //        CompletableFuture<String> urlFuture = CompletableFuture.supplyAsync(() -> url);
-    //        CompletableFuture<Result<File>> fileFuture = urlFuture.thenApplyAsync(value -> {
-    //            printCurrentThread("Download " + url);
-    //            return downloader.downloadFile(value);
-    //        });
-    //        fileFuture.thenApplyAsync(fileResult -> processFileResult(fileResult, standar))
-    //    }
 
     private static Result<List<Accumulator<?>>> getFutureOrError(
             CompletableFuture<Result<List<Accumulator<?>>>> future) {
@@ -52,7 +43,7 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
     }
 
     @Override
-    public void downloadAndProcess(List<String> urls, StandardAccumulators standardAccumulators) {
+    public void downloadAndProcess(List<String> urls, AccumulatorTypes accumulatorTypes) {
         long start = Clock.systemUTC().millis();
 
         List<CompletableFuture<Result<List<Accumulator<?>>>>> shardResultFutures =
@@ -69,7 +60,7 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
                     fileFuture.thenApplyAsync(
                             fileResult -> {
                                 printCurrentThread("Process " + url);
-                                return processFileResult(fileResult, standardAccumulators);
+                                return processFileResult(fileResult, accumulatorTypes);
                             });
             shardResultFutures.add(resultCompletableFuture);
         }
@@ -90,7 +81,7 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
                         .toList();
 
         for (Accumulator<?> result : successful) {
-            standardAccumulators.accumulate(result);
+            accumulatorTypes.accumulate(result);
         }
         long end = Clock.systemUTC().millis();
 
@@ -107,7 +98,6 @@ public class ParallelFileBatchDownloaderProcessor implements FileBatchDownloader
 
         System.out.println();
         System.out.println("Results:");
-        System.out.println(standardAccumulators.getMean().reportedResult());
-        System.out.println(standardAccumulators.getMedian().reportedResult());
+        accumulatorTypes.printResults();
     }
 }

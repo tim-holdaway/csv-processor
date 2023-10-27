@@ -41,6 +41,9 @@ public class FileProcessorTest {
 
         @Override
         public void accumulate(Accumulator<?> accumulator) {}
+
+        @Override
+        public void printResults() {}
     }
 
     @Test

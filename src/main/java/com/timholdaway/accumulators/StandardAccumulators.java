@@ -14,14 +14,6 @@ public class StandardAccumulators implements AccumulatorTypes {
         return Arrays.asList(new MeanAccumulator(), new MedianAccumulator());
     }
 
-    public MeanAccumulator getMean() {
-        return mean;
-    }
-
-    public MedianAccumulator getMedian() {
-        return median;
-    }
-
     @Override
     public void accumulate(Accumulator<?> accumulator) {
         if (accumulator instanceof MeanAccumulator shardMean) {
@@ -29,5 +21,11 @@ public class StandardAccumulators implements AccumulatorTypes {
         } else if (accumulator instanceof MedianAccumulator shardMedian) {
             median.coalesce(shardMedian);
         }
+    }
+
+    @Override
+    public void printResults() {
+        System.out.println(mean.reportedResult());
+        System.out.println(median.reportedResult());
     }
 }

@@ -2,7 +2,7 @@
 package com.timholdaway;
 
 import com.timholdaway.accumulators.Accumulator;
-import com.timholdaway.accumulators.StandardAccumulators;
+import com.timholdaway.accumulators.AccumulatorTypes;
 import java.io.File;
 import java.time.Clock;
 import java.util.*;
@@ -18,13 +18,13 @@ public class SequentialFileBatchDownloaderProcessor implements FileBatchDownload
     }
 
     public Result<List<Accumulator<?>>> processFileResult(
-            Result<File> fileResult, StandardAccumulators standardAccumulators) {
+            Result<File> fileResult, AccumulatorTypes accumulatorTypes) {
         return fileResult.mapResult(
-                file -> processor.processFile(file, standardAccumulators.resultsForShard()));
+                file -> processor.processFile(file, accumulatorTypes.resultsForShard()));
     }
 
     @Override
-    public void downloadAndProcess(List<String> urls, StandardAccumulators standardAccumulators) {
+    public void downloadAndProcess(List<String> urls, AccumulatorTypes accumulatorTypes) {
         long start = Clock.systemUTC().millis();
 
         List<Result<File>> tempDownloads =
@@ -32,7 +32,7 @@ public class SequentialFileBatchDownloaderProcessor implements FileBatchDownload
 
         List<Result<List<Accumulator<?>>>> results =
                 tempDownloads.stream()
-                        .map(fileResult -> processFileResult(fileResult, standardAccumulators))
+                        .map(fileResult -> processFileResult(fileResult, accumulatorTypes))
                         .toList();
 
         List<Accumulator<?>> successful =
@@ -46,7 +46,7 @@ public class SequentialFileBatchDownloaderProcessor implements FileBatchDownload
                 results.stream().map(Result::extractError).filter(Objects::nonNull).toList();
 
         for (Accumulator<?> result : successful) {
-            standardAccumulators.accumulate(result);
+            accumulatorTypes.accumulate(result);
         }
 
         long end = Clock.systemUTC().millis();
@@ -62,7 +62,6 @@ public class SequentialFileBatchDownloaderProcessor implements FileBatchDownload
 
         System.out.println();
         System.out.println("Results:");
-        System.out.println(standardAccumulators.getMean().reportedResult());
-        System.out.println(standardAccumulators.getMedian().reportedResult());
+        accumulatorTypes.printResults();
     }
 }
