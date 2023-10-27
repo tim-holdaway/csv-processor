@@ -8,17 +8,14 @@ import java.util.Scanner;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 
-public class CsvProcessorApplication implements Callable<Integer> {
-
-    @CommandLine.Parameters List<String> allParameters;
+public class CsvProcessorApplication {
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new CsvProcessorApplication()).execute(args);
-        System.exit(exitCode);
+        new CsvProcessorApplication().run();
     }
 
-    @Override
-    public Integer call() {
+    public void run() {
+
         List<String> urls = readUrlsFromStdin();
 
         System.out.println("Urls: ");
@@ -28,11 +25,10 @@ public class CsvProcessorApplication implements Callable<Integer> {
         FileProcessor processor = new FileProcessor();
 
         FileBatchDownloaderProcessor batcher =
-                new FileBatchDownloaderProcessor(downloader, processor);
+
+                new SequentialFileBatchDownloaderProcessor(downloader, processor);
 
         batcher.downloadAndProcess(urls, new StandardAccumulators());
-
-        return 0;
     }
 
     private List<String> readUrlsFromStdin() {
