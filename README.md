@@ -74,3 +74,12 @@ The linter can be run with gradle:
 	* While there are basic unit tests and an integration test in this repository, these simple tests come nowhere near the sort of tests we would want to perform for production use at scale. To test at scale, we could create an estimate of production data volumes. We could produce data of similar scale to expected production data (or maybe an order of magnitude larger, as a safety buffer for when demand grows in the future), and run the program against the large test dataset in a test environment that is configured and specced similarly to our production environment. We might generate the test data based on real data if there are idiosyncrasies in real data that we care about, or we might generate random data for the load test if we determine that's sufficient. We would want to instrument the application with monitoring and logging, and observe errors and resource metrics during the test execution.
 	* We might also want to keep an eye on the data sources we're downloading from. We don't want to DDOS our data sources.
 	* We might also be able to soft-launch the code in production -- that is, run it separately from other applications, and turn it on to consume data and produce results, and monitor its performance and output against real data before we start using its output in downstream services.
+
+
+# Future improvements wish list
+If I had more time to work on this, I'd improve the following:
+* replace `System.out.println` calls with logging framework, and centralize the output logic.
+* Build a more robust set of command line options using an option parsing library. Options I'd like to support include specifying parallelism and error handling behaviors.
+* Restructure code to use a dependency injection framework, to support better unit tests. I've sort of used this pattern in places in the code, but rigorously applying it everywhere would make it easier to test components of the sytem,.
+* Additional calculations beyond mean and median, and a more extensible way of specifying sets of calculations to run and aggregate.
+* Stretch goal: build out distributed support for massively parallel processing and aggregation.
